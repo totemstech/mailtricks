@@ -49,7 +49,11 @@ app.get('/extract/:email', function(req, res, next) {
     res.send('OK');
   });
 
-app.get('/oauth/request', function(req, res, next) {
+app.get('/oauth/init', function(req, res, next) {
+    
+  });
+
+app.get('/oauth/finish', function(req, res, next) {
     
   });
 
