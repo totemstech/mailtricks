@@ -16,16 +16,18 @@ var infra = require('infra');
 app.configure(function() {
     app.use(express.cookieParser());
     app.use(express.bodyParser());
-});
+    app.use(express.methodOverride());
+    app.use(app.router);
+    app.use(express.static(__dirname + '/public'));
+  });
 
 app.configure('development', function() {
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
   });
 
-app.configure('production', function(){
+app.configure('production', function() {
     app.use(express.errorHandler()); 
   });
-
 
 // cfg
 
@@ -37,8 +39,8 @@ var cfg = fwk.populateConfig(require("./config.js").config);
 var mongo = new mongodb.Db('mailtricks', 
                            new mongodb.Server(my.cfg['MAILTRICKS_MONGO_HOST'], 
                                               parseInt(my.cfg['MAILTRICKS_MONGO_PORT'], 10), {
-                                                 'auto_reconnect': my.cfg['MAILTRICKS_MONGO_RECONNECT']
-                                               }));
+                                                'auto_reconnect': my.cfg['MAILTRICKS_MONGO_RECONNECT']
+                                              }));
 
 
 // Routes
@@ -47,6 +49,9 @@ app.get('/extract/:email', function(req, res, next) {
     res.send('OK');
   });
 
+app.get('/oauth/request', function(req, res, next) {
+    
+  });
 
 
 // Authentication & Start

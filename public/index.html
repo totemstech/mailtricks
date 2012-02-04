@@ -1,0 +1,27 @@
+<html>
+ <head>
+   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+ </head>
+ <body>
+  <script type="text/javascript">
+   (function() {
+     var GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/auth";
+     var GOOGLE_CLIENT_ID = "549650950581.apps.googleusercontent.com";
+     var PLUS_ME_SCOPE = "https://www.googleapis.com/auth/plus.me";
+
+     var button = document.createElement("button");
+     button.innerText = "Start Mail Tricks";
+     button.onclick = function() {
+       $.ajax({ url: '/oauth/request',
+               type: 'GET',
+               cache: false,
+               dataType: 'json',
+               success: function(data) {
+                  
+               }
+       });
+     };
+     document.body.appendChild(button);})();
+  </script>
+ </body>
+</html>

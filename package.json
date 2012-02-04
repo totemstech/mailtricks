@@ -1,7 +1,7 @@
 {
-  "name": "mailtricks-extractor",
+  "name": "mailtricks",
   "author": "MailTricks Team",
-  "subdomain": "mailtricks-extractor",
+  "subdomain": "mailtricks",
   "version": "0.1.0",
   "scripts": {
     "start": "./app.js"
