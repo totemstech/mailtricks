@@ -9,7 +9,7 @@ var fwk = require('fwk');
 var express = require('express');
 var app = module.exports = express.createServer();
 var http = require('http');
-var infra = require('infra');
+var mongodb = require('mongodb');
 
 // Configuration
 
@@ -37,11 +37,16 @@ var cfg = fwk.populateConfig(require("./config.js").config);
 // Mongo
 
 var mongo = new mongodb.Db('mailtricks', 
-                           new mongodb.Server(my.cfg['MAILTRICKS_MONGO_HOST'], 
-                                              parseInt(my.cfg['MAILTRICKS_MONGO_PORT'], 10), {
-                                                'auto_reconnect': my.cfg['MAILTRICKS_MONGO_RECONNECT']
+                           new mongodb.Server(cfg['MAILTRICKS_MONGO_HOST'], 
+                                              parseInt(cfg['MAILTRICKS_MONGO_PORT'], 10), {
+                                                'auto_reconnect': cfg['MAILTRICKS_MONGO_RECONNECT']
                                               }));
 
+
+// OAuth
+
+var oauth = require('./lib/oauth.js').oauth({ cfg: cfg,
+                                              mongo: mongo });
 
 // Routes
 
@@ -49,12 +54,34 @@ app.get('/extract/:email', function(req, res, next) {
     res.send('OK');
   });
 
-app.get('/oauth/init', function(req, res, next) {
-    
+app.get('/oauth/request', function(req, res, next) {
+    oauth.getRequestToken(function(err, token) {
+        if(err) 
+          next(err);
+        else {
+          res.json({ oauth_token: token });
+        }
+      });    
   });
 
-app.get('/oauth/finish', function(req, res, next) {
-    
+// https://www.google.com/accounts/OAuthAuthorizeToken?oauth_token=&hd=default&hl=en
+
+app.get('/oauth/callback', function(req, res, next) {
+    oauth.getAccessToken(req.param('oauth_token'),
+                         req.param('oauth_verifier'),
+                         function(err, token, secret, results) {
+                           console.log(err);
+                           console.log('token: ' + token);
+                           console.log('secret: ' + secret);
+                           console.log(results);
+                           if(err) 
+                             next(err);
+                           else {
+                             res.json({ oauth_token: token,
+                                        oauth_token_secret: secret,
+                                        results: results });
+                           }
+                         });
   });
 
 
